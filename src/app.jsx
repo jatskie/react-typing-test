@@ -219,8 +219,6 @@ var Footer = React.createClass({
   render: function() {
     return (
       <div className="footer">
-        Source code available on <a target="_blank" href="https://github.com/sinapinto/react-typing-test">Github</a>.
-        Colorscheme used is <a target="_blank" href="https://github.com/morhetz/gruvbox">Gruvbox</a>.
       </div>
     );
   },
