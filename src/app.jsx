@@ -161,9 +161,7 @@ var App = React.createClass({
       this.setInterval(function() {
         this.setState({
           timeElapsed: new Date().getTime() - this.state.startTime
-        });
-        
-        console.log(this.state.timeElapsed/1000);
+        });        
         
         // we reached more x seconds let's end the exam
         if ((this.state.timeElapsed / 1000) > 900) {
