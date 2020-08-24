@@ -85,28 +85,32 @@ var App = React.createClass({
     this.intervals.push(setInterval.apply(null, arguments));
   },
   getInitialState: function() {
+    var excerptKey = Math.floor(Math.random()*this.props.excerpts.length);
+
     return {
       index: 0,
       error: false,
       errorCount: 0,
-      lineView: false,
+      lineView: true,
       timeElapsed: 0,
       value: '',
       startTime: null,
       wpm: 0,
-      excerpt: this._randomElement(this.props.excerpts),
+      excerpt: this._randomElement(this.props.excerpts, excerptKey),
+      excerptLevel: excerptKey,
       completed: false
     };
   },
-  _randomElement: function(array) {
-    return this.props.excerpts[Math.floor(Math.random()*this.props.excerpts.length)];
+  _randomElement: function(array, key) {
+    return this.props.excerpts[key];
   },
   _handleInputChange: function(e) {
     if (this.state.completed) {
       return;
     }
     var inputVal = e.target.value;
-    var index = this.state.index;
+    var index = this.state.index;    
+
     if (this.state.excerpt.slice(index, index + inputVal.length) === inputVal) {
       if (inputVal.slice(-1) === " " && !this.state.error) {
         // handle a space after a correct word
@@ -115,7 +119,7 @@ var App = React.createClass({
           value: ''
         });
       }
-      else if (index + inputVal.length == this.state.excerpt.length) {
+      else if (index + inputVal.length == this.state.excerpt.length) {        
         // successfully completed
         this.setState({
           value: '',
@@ -158,6 +162,17 @@ var App = React.createClass({
         this.setState({
           timeElapsed: new Date().getTime() - this.state.startTime
         });
+        
+        console.log(this.state.timeElapsed/1000);
+        
+        // we reached more x seconds let's end the exam
+        if ((this.state.timeElapsed / 1000) > 900) {
+          this.setState({
+            completed: true
+          });
+          this.intervals.map(clearInterval);          
+        }
+
       }.bind(this), 50)
       // WPM
       this.setInterval(function() {
@@ -181,15 +196,10 @@ var App = React.createClass({
   render: function() {
     return (
       <div>
-        <div className="header">
-          <h1>typing speed test</h1>
+        <div className="header">          
           <i
             className="fa fa-lg fa-refresh"
             onClick={this._restartGame}>
-          </i>
-          <i
-            className="fa fa-lg fa-bars"
-            onClick={this._changeView}>
           </i>
         </div>
         <TextDisplay
@@ -208,6 +218,10 @@ var App = React.createClass({
           <Clock elapsed={this.state.timeElapsed} />
           <span className="wpm">{this.state.wpm}</span>
           <span className="errors">{this.state.errorCount}</span>
+          <input type="hidden" className="ResultElapsed" value={this.state.timeElapsed} />
+          <input type="hidden" className="ResultWpm" value={this.state.wpm} />
+          <input type="hidden" className="ResultError" value={this.state.errorCount} />
+          <input type="hidden" className="ResultLevel" value={this.state.excerptLevel} />
         </div>
         <Footer />
       </div>
@@ -224,4 +238,4 @@ var Footer = React.createClass({
   },
 });
 
-React.render(<App excerpts={excerpts} />, document.getElementById('container'));
+React.render(<App excerpts={excerpts} />, document.getElementById('typing-test-container'));
