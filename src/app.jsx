@@ -55,6 +55,20 @@ var Clock = React.createClass({
   },
 });
 
+var SubmitButton = React.createClass({
+  render: function() {
+    if (this.props.completed) {    
+      return (
+        <button href="#" className="btn btn-primary submit-tt-result">
+          Submit Result
+        </button>
+      );
+    } else {
+      return (<div></div>);
+    }
+  },
+});
+
 var TextInput = React.createClass({
   handleChange: function(e) {
     if (!this.props.started) {
@@ -194,7 +208,7 @@ var App = React.createClass({
   render: function() {
     return (
       <div>
-        <div className="header">          
+        <div className="header">
           <i
             className="fa fa-lg fa-refresh"
             onClick={this._restartGame}>
@@ -221,7 +235,7 @@ var App = React.createClass({
           <input type="hidden" className="ResultError" value={this.state.errorCount} />
           <input type="hidden" className="ResultLevel" value={this.state.excerptLevel} />
         </div>
-        <Footer />
+        <Footer completed={this.state.completed} />
       </div>
     );
   }
@@ -231,6 +245,7 @@ var Footer = React.createClass({
   render: function() {
     return (
       <div className="footer">
+        <SubmitButton completed={this.props.completed} />
       </div>
     );
   },
